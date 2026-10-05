@@ -84,12 +84,25 @@ int main()
 {
     srand(time(0));
     vector<Movie> reviewList;
+    ifstream file;
+    file.open("input.txt");
+
+    string file_title, file_review;
+    while (getline(file, file_title))
+    {
+        file.ignore();
+        for (int i = 0; i < 3; i++)
+            getline(file, file_review);
+    }
+
     for (int i = 0; i < SIZE; i++)
     {
         Movie temp;
         temp = Movie("title");
         for (int i = 0; i < 3; i++)
             temp.addReview(double(rand() % 50) / 10, "wtf");
-        temp.output();
+        reviewList.push_back(temp);
     }
+    for (int i = 0; i < SIZE; i++)
+        reviewList[i].output();
 }
