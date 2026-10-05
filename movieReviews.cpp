@@ -6,8 +6,6 @@
 #include <ctime>
 using namespace std;
 
-const int SIZE = 4;
-
 //Declare the Movie class
 struct Review
 {
@@ -125,26 +123,20 @@ class Movie
 int main()
 {
     srand(time(0));
-    vector<Movie> reviewList;
+    vector<Movie> movieList, reviewList;
     ifstream file;
     file.open("input.txt");
 
-    string file_title, file_review;
-    while (getline(file, file_title))
+    Movie m;
+    int index;
+    string file_title, file_review[3];
+    while (file >> index)
     {
-        file.ignore();
+        m.setTitle(file_title);
         for (int i = 0; i < 3; i++)
-            getline(file, file_review);
+            m.addReview(double(rand() % 50) / 10, file_review[i]);
+        movieList.push_back(m);
     }
-
-    for (int i = 0; i < SIZE; i++)
-    {
-        Movie temp;
-        temp = Movie("title");
-        for (int i = 0; i < 3; i++)
-            temp.addReview(double(rand() % 50) / 10, "wtf");
-        reviewList.push_back(temp);
-    }
-    for (int i = 0; i < SIZE; i++)
-        reviewList[i].output();
+    for (int i = 0; i < movieList.size(); i++)
+        movieList[i].output();
 }
