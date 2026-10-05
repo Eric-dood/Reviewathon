@@ -21,6 +21,17 @@ class Movie
     private:
         string title;
         Review *reviews;
+        void removeList()
+        {
+            Review *current = reviews;
+            while(current != nullptr)
+            {
+                reviews = current->next;
+                delete reviews;
+                current = reviews;
+            }
+            reviews = nullptr;
+        }
     public:
         string getTitle() { return title; }
         void setTitle(string str) { title = str; }
@@ -66,17 +77,48 @@ class Movie
         Movie() : reviews(nullptr) {}
         Movie(string title) : reviews(nullptr) { setTitle(title); }
         Movie(string title, double rating) : reviews(nullptr) { setTitle(title); }
-        //Movie Destructor
-        ~Movie()
+        //Copy constructor
+        Movie(const Movie& o)
         {
-            Review *current = reviews;
-            while(current != nullptr)
-            {
-                reviews = current->next;
-                delete reviews;
-                current = reviews;
-            }
+            title = o.title;
             reviews = nullptr;
+            Review* newNode = nullptr, *current = o.reviews, *tail = nullptr;
+            while (current != nullptr)
+            {
+                newNode = new Review;
+                newNode->rating = current->rating;
+                newNode->review = current->review;
+                newNode->next = nullptr;
+                if (reviews == nullptr) reviews = newNode;
+                else tail->next = newNode;
+                tail = newNode;
+                current = current->next;
+            }
+        }
+        //Movie Destructor
+        ~Movie() { removeList(); }
+        //Copy assignment operator
+        Movie& operator=(const Movie& o)
+        {
+            if (this != &o)
+            {
+                removeList();
+                title = o.title;
+                reviews = nullptr;
+                Review* newNode = nullptr, *current = o.reviews, *tail = nullptr;
+                while (current != nullptr)
+                {
+                    newNode = new Review;
+                    newNode->rating = current->rating;
+                    newNode->review = current->review;
+                    newNode->next = nullptr;
+                    if (reviews == nullptr) reviews = newNode;
+                    else tail->next = newNode;
+                    tail = newNode;
+                    current = current->next;
+                }
+            }
+            return *this;
         }
 };
 
