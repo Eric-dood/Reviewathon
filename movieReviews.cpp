@@ -15,7 +15,10 @@ class Movie
 {
     private:
         string title;
-        Rating *next;
+        Rating *reviews;
     public:
-        
+        string getTitle() { return title; }
+        void setTitle(string str) { title = str; }
+        Movie() : reviews(nullptr) {}
+        ~Movie() { delete reviews; }
 };
