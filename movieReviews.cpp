@@ -39,6 +39,21 @@ class Movie
             //Then set the list as nullptr for no errors
             reviews = nullptr;
         }
+        void copyConstructInit(Review *n1, Review *n2, Review *n3)
+        {
+            while (n2 != nullptr)
+            {
+                n1 = new Review;
+                n1->rating = n2->rating; //Set up the rating
+                n1->review = n2->review; //Set up the review
+                n1->next = nullptr; //Set the next value as nullptr
+                //If the reviews list is empty, 
+                if (reviews == nullptr) reviews = n1;
+                else n3->next = n1;
+                n3 = n1;
+                n2 = n2->next;
+            }
+        }
     //Here are the public functions
     public:
         //getTitle() will return the title
@@ -70,8 +85,11 @@ class Movie
             //Use a while() loop to iterate through the entire linked list loop
             while (current != nullptr)
             {
+                //Add up the size number by 1
                 size += 1;
+                //Add up the avergae by the rating
                 avg += current->rating;
+                //Go through the next element
                 current = current->next;
             }
             //Return the average number divided by the size
@@ -95,8 +113,11 @@ class Movie
                 //Also a while() loop to properly iterate through all elements
                 while (current != nullptr)
                 {
+                    //Print the review & ratings
                     cout << setw(10) << "> Review #" << count << ": " << current->rating << ": " << current->review << endl;
+                    //Add up the count number by 1
                     count += 1;
+                    //Go through the next element
                     current = current->next;
                 }
                 //Print the average
@@ -106,46 +127,35 @@ class Movie
         //Movie Constructors
         Movie() : reviews(nullptr) { setTitle("N/A"); }
         Movie(string title) : reviews(nullptr) { setTitle(title); }
-        //Copy constructor
+        //Copy constructor; will be useful for vectors and such
         Movie(const Movie& o)
         {
+            //Set the title as the other title
             title = o.title;
+            //For now, set the reviews as the nullptr
             reviews = nullptr;
+            //Bundle up all of those nodes
             Review* newNode = nullptr, *current = o.reviews, *tail = nullptr;
-            while (current != nullptr)
-            {
-                newNode = new Review;
-                newNode->rating = current->rating;
-                newNode->review = current->review;
-                newNode->next = nullptr;
-                if (reviews == nullptr) reviews = newNode;
-                else tail->next = newNode;
-                tail = newNode;
-                current = current->next;
-            }
+            //use copyConstructInit() for simpler code
+            copyConstructInit(newNode, current, tail);
         }
         //Movie Destructor
-        ~Movie() { removeList(); }
+        ~Movie() { removeList(); } //Simply reuse removeList lol
         //Copy assignment operator
         Movie& operator=(const Movie& o)
         {
+            //If 'this' doesn't have a obj
             if (this != &o)
             {
+                //Remove the list
                 removeList();
+                //Set up the title as o.title & reviews as nullptr
                 title = o.title;
                 reviews = nullptr;
+                //Set up the nodes
                 Review* newNode = nullptr, *current = o.reviews, *tail = nullptr;
-                while (current != nullptr)
-                {
-                    newNode = new Review;
-                    newNode->rating = current->rating;
-                    newNode->review = current->review;
-                    newNode->next = nullptr;
-                    if (reviews == nullptr) reviews = newNode;
-                    else tail->next = newNode;
-                    tail = newNode;
-                    current = current->next;
-                }
+                //use copyConstructInit() for simpler code
+                copyConstructInit(newNode, current, tail);
             }
             return *this;
         }
@@ -159,21 +169,34 @@ int main()
     //Declare the movieList vector
     vector<Movie> movieList;
     //Also put in the input file
-    ifstream file("input.txt");
+    string filename = "input.txt"; //Will be used for the file name
+    ifstream file(filename);
 
     int index;
     string file_title, file_review[3];
-    while (getline(file, file_title))
+    //If the file does not exist, generate a error message
+    if (!file.good()) cout << "No sight of '" << filename << "' file so far." << endl;
+    else //Otherwise continue as normal
     {
-        if (file_title.empty()) continue;
-        for (int i = 0; i < 3; i++) getline(file, file_review[i]);
-
-        Movie m;
-        m.setTitle(file_title);
-        for (int i = 0; i < 3; i++)
-            m.addReview(double(rand() % 50) / 10, file_review[i]);
-        movieList.push_back(m);
+        //Do a while() loop to get all of the files
+        while (getline(file, file_title))
+        {
+            //If the title does not exist, continue
+            if (file_title.empty()) continue;
+            //Get all of the three reviews
+            for (int i = 0; i < 3; i++) getline(file, file_review[i]);
+            //Generate a temporary Movie object called m
+            Movie m;
+            //Set the title of the m object
+            m.setTitle(file_title);
+            //Also set the reviews of the m object
+            for (int i = 0; i < 3; i++)
+                m.addReview(double(rand() % 50) / 10, file_review[i]);
+            //Add up the m object to the movieList vector
+            movieList.push_back(m);
+        }
+        //After the whole loop is done, output all of the movie names & reviews!
+        for (int i = 0; i < movieList.size(); i++)
+            movieList[i].output();
     }
-    for (int i = 0; i < movieList.size(); i++)
-        movieList[i].output();
 }
