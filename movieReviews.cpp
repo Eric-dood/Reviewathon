@@ -1,5 +1,6 @@
 //COMSC-210 | Lab 18 | Eric-Giulio Hedes
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <fstream>
 #include <cstdlib>
@@ -127,11 +128,14 @@ int main()
     ifstream file;
     file.open("input.txt");
 
-    Movie m;
     int index;
     string file_title, file_review[3];
-    while (file >> index)
+    while (getline(file, file_title))
     {
+        if (file_title.empty()) continue;
+        for (int i = 0; i < 3; i++) getline(file, file_review[i]);
+
+        Movie m;
         m.setTitle(file_title);
         for (int i = 0; i < 3; i++)
             m.addReview(double(rand() % 50) / 10, file_review[i]);
