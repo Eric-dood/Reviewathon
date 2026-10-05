@@ -24,7 +24,6 @@ class Movie
     public:
         string getTitle() { return title; }
         void setTitle(string str) { title = str; }
-        Review *getReview() { return reviews; }
         void addReview(double rating, string review)
         {
             Review *newVal = new Review;
@@ -34,16 +33,39 @@ class Movie
             reviews = newVal;
 
         }
+        double getReviewAverage()
+        {
+            if (reviews == nullptr) return 0;
+
+            double avg;
+            Review *current = reviews;
+            int size = 0;
+            while (current != nullptr)
+            {
+                size += 1;
+                avg += current->rating;
+                current = current->next;
+            }
+            return avg / size;
+        }
         //Print out the title & reviews
         void output()
         {
             cout << "Movie Title: " << getTitle() << endl;
-            for (int i = 0; i < 3; i++)
-                cout << setw(10) << "> Review #" << i+1 << getReview()->rating << endl;
+            Review *current = reviews;
+            int count = 1;
+            while (current != nullptr)
+            {
+                cout << setw(10) << "> Review #" << count << ": " << current->rating << ": " << current->review << endl;
+                count += 1;
+                current = current->next;
+            }
+            cout << setw(10) << "> Average: " << getReviewAverage() << endl << endl;
         }
         //Movie Constructors
         Movie() : reviews(nullptr) {}
-        Movie(double rating) : reviews(nullptr) {}
+        Movie(string title) : reviews(nullptr) { setTitle(title); }
+        Movie(string title, double rating) : reviews(nullptr) { setTitle(title); }
         //Movie Destructor
         ~Movie()
         {
@@ -65,6 +87,9 @@ int main()
     for (int i = 0; i < SIZE; i++)
     {
         Movie temp;
-        temp.addReview(rand() % 5, "wtf");
+        temp = Movie("title");
+        for (int i = 0; i < 3; i++)
+            temp.addReview(double(rand() % 50) / 10, "wtf");
+        temp.output();
     }
 }
